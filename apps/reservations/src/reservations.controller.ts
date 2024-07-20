@@ -1,4 +1,4 @@
-import { CurrentUser } from '@app/common';
+import { CurrentUser, Roles } from '@app/common';
 import { JwtAuthGuard } from '@app/common/auth';
 import { UserDto } from '@app/common/dto';
 import {
@@ -51,6 +51,7 @@ export class ReservationsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @Roles('Admin')
   remove(@Param('id') id: string) {
     return this.reservationsService.remove(id);
   }
