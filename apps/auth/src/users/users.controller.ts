@@ -1,4 +1,4 @@
-import { UserDocument } from '@app/common';
+import { User } from '@app/common';
 import { CurrentUser } from '@app/common/decorators/current-user.decorator';
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -16,7 +16,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUser(@CurrentUser() user: UserDocument) {
+  async getUser(@CurrentUser() user: User) {
     console.log('🚀 ~ UsersController ~ getUser ~ user:', user);
     return user;
   }
