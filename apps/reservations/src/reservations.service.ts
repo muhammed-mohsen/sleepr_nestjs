@@ -1,7 +1,7 @@
-import { PAYMENTS_SERVICE } from '@app/common';
+import { PAYMENT_SERVICE_NAME, PaymentServiceClient } from '@app/common';
 import { UserDto } from '@app/common/dto';
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
 import { catchError, map, of } from 'rxjs';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -9,12 +9,16 @@ import { ReservationsRepository } from './reservations.repository';
 // import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
-export class ReservationsService {
+export class ReservationsService implements OnModuleInit {
+  private paymentService: PaymentServiceClient;
   constructor(
     private readonly reservationsRepository: ReservationsRepository,
-    @Inject(PAYMENTS_SERVICE) private readonly paymentsService: ClientProxy,
+    @Inject(PAYMENT_SERVICE_NAME) private readonly client: ClientGrpc,
   ) {}
-
+  onModuleInit() {
+    this.paymentService =
+      this.client.getService<PaymentServiceClient>(PAYMENT_SERVICE_NAME);
+  }
   async create(
     createReservationDto: CreateReservationDto,
     { email, _id: userId }: UserDto,
@@ -26,8 +30,8 @@ export class ReservationsService {
     //   userId: userId,
     //   invoiceId: 'in123',
     // });
-    return this.paymentsService
-      .send('create_charge', {
+    return this.paymentService
+      .createCharge({
         ...createReservationDto.charge,
         email,
       })

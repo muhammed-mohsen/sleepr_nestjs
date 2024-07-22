@@ -5,3 +5,4 @@ export * from './database/abstract.schema';
 export * from './models';
 export * from './decorators';
 export * from './health';
+export * from './types';
