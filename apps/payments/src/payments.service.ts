@@ -48,4 +48,8 @@ export class PaymentsService {
   getHello(): string {
     return 'Hello World!';
   }
+  async getPayments() {
+    const payments = await this.stripe.paymentIntents.list();
+    return payments.data;
+  }
 }

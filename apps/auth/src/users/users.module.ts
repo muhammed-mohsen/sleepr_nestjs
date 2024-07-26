@@ -1,6 +1,5 @@
-import { UserDocument, UserSchema } from '@app/common';
+import { LoggerModule, UserDocument, UserSchema } from '@app/common';
 import { DatabaseModule } from '@app/common/database';
-import { LoggerModule } from '@app/common/logger';
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';

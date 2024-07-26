@@ -2,11 +2,16 @@ import {
   AUTH_SERVICE,
   DatabaseModule,
   HealthModule,
+  LoggerModule,
   PAYMENTS_SERVICE,
 } from '@app/common';
-import { LoggerModule } from '@app/common/logger';
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
 import {
@@ -15,8 +20,8 @@ import {
 } from './models/reservation.schema';
 import { ReservationsController } from './reservations.controller';
 import { ReservationsRepository } from './reservations.repository';
+import { ReservationsResolver } from './reservations.resolver';
 import { ReservationsService } from './reservations.service';
-
 @Module({
   imports: [
     DatabaseModule,
@@ -34,6 +39,12 @@ import { ReservationsService } from './reservations.service';
     DatabaseModule.forFeature([
       { name: ReservationDocument.name, schema: ReservationSchema },
     ]),
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: {
+        federation: 2,
+      },
+    }),
     LoggerModule,
     ClientsModule.registerAsync([
       {
@@ -63,6 +74,10 @@ import { ReservationsService } from './reservations.service';
   ],
 
   controllers: [ReservationsController],
-  providers: [ReservationsService, ReservationsRepository],
+  providers: [
+    ReservationsService,
+    ReservationsRepository,
+    ReservationsResolver,
+  ],
 })
 export class ReservationsModule {}
